@@ -1,0 +1,63 @@
+"===================================Plugin manager block===========================================
+call plug#begin('~/.vim/plugged')
+Plug 'itchyny/lightline.vim' " Nice looking powerline (that thing at the bottom)
+Plug 'ycm-core/YouCompleteMe' " Autocomplete
+Plug 'honza/vim-snippets' " Snippets engine
+Plug 'SirVer/ultisnips' " Actual snippets
+Plug 'airblade/vim-gitgutter' " Show uncommited changes
+Plug 'scrooloose/nerdtree' " File tree
+call plug#end()
+
+"==================================Basic config block==============================================
+syntax on
+set noswapfile "Do not litter drive with swap files
+set nobackup "Do not litter with those to
+
+set tabstop=4 softtabstop=4 "Tabulation equals four spaces
+set shiftwidth=4
+set smartindent
+
+set guifont=Monospace\ 12 "Reasonable font with reasonable size
+set noerrorbells "Stops those stupid beep noises
+set nowrap " Do not wrap lines if they go out of visible space
+color deus "My colorscheme of choice (must be in ~/.vim/color)
+set number "Show line numbers
+set relativenumber " Show numbers relative to cursor
+set colorcolumn=100 "Mark this column so I wont write to long of a lines
+highlight ExtraWhitespace ctermbg=red guibg=red
+set laststatus=2 " Statusline will look ok with that
+set noshowmode " With lightline there is no reason to show mode
+set splitbelow " Open splits in more reasonable way
+set splitright " Open splits in more reasonable way
+set incsearch "Searching starts instantly when I type
+
+let g:lightline = {
+      \ 'colorscheme': 'OldHope',
+      \ }
+
+" Convinient navigation between tabs
+nmap <C-o> :tabprevious<CR>
+nmap <C-p> :tabnext<CR>
+nmap <C-f> :NERDTreeToggle<CR>
+
+" Convinient navigation between splits
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+
+
+
+"=================================Autocompletion config============================================
+
+
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<C-n>', '<Down>']
+let g:ycm_key_list_previous_completion = ['<C-p>', '<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
+
+" better key bindings for UltiSnipsExpandTrigger
+let g:UltiSnipsExpandTrigger = "<tab>"
+let g:UltiSnipsJumpForwardTrigger = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
