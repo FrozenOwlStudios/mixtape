@@ -9,7 +9,6 @@ fn main() -> GameResult {
     graphics::set_window_title(&context, "Zrzynka");
     let mut game = PongGame::new();
     event::run(context, event_loop, game);
-    Ok(())
 }
 
 
