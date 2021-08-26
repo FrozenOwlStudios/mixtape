@@ -15,12 +15,13 @@ const FRICTION:f32 = 0.1;
 const BALL_SIZE:f32 = 20.0;
 const BALL_SIZE_HALF:f32 = BALL_SIZE/2.0;
 const BALL_SERVE_VELOCITY_MAX:f32 = 100.0;
+const MINIMUM_VELOCITY:f32 = 0.005;
 
 
 fn main() -> GameResult {
     let (mut context, event_loop) = ContextBuilder::new("Zrzynka", "Kolektyw").build()?;
     graphics::set_window_title(&context, "Zrzynka");
-    let mut game = PongGame::new(&mut context);
+    let game = PongGame::new(&mut context);
     event::run(context, event_loop, game);
 }
 
@@ -57,7 +58,7 @@ impl Racket{
     }
 
     pub fn update(&mut self, dt: f32, context: &Context){
-        self.check_border_collisions(dt, context);
+        self.check_border_collisions(context);
         self.apply_acceleration(dt);
     }
 
@@ -66,9 +67,16 @@ impl Racket{
         self.position.y += self.velocity.y*dt + self.acceleration.y*dt*dt/2.0;
         self.velocity.x += self.acceleration.x*dt - self.velocity.x*FRICTION*dt;
         self.velocity.y += self.acceleration.y*dt - self.velocity.y*FRICTION*dt;
+        if self.velocity.x.abs() < MINIMUM_VELOCITY {
+            self.velocity.x = 0.0;
+        }
+        if self.velocity.y.abs() < MINIMUM_VELOCITY {
+            self.velocity.y = 0.0;
+        }
+        
     }
 
-    fn check_border_collisions(&mut self, dt: f32, context: &Context){
+    fn check_border_collisions(&mut self, context: &Context){
         let (_, screen_height) = graphics::drawable_size(context);
         if self.position.y - RACKET_HEIGHT_HALF <= 0.0 ||
             self.position.y + RACKET_HEIGHT_HALF >= screen_height{
@@ -120,6 +128,12 @@ impl Ball{
         self.position.y += self.velocity.y*dt + self.acceleration.y*dt*dt/2.0;
         self.velocity.x += self.acceleration.x*dt - self.velocity.x*FRICTION*dt;
         self.velocity.y += self.acceleration.y*dt - self.velocity.y*FRICTION*dt;
+        if self.velocity.x.abs() < MINIMUM_VELOCITY {
+            self.velocity.x = 0.0;
+        }
+        if self.velocity.y.abs() < MINIMUM_VELOCITY {
+            self.velocity.y = 0.0;
+        }
     }
 
     fn check_border_collisions(&mut self, dt: f32, context: &Context){
@@ -200,11 +214,11 @@ impl EventHandler<GameError> for PongGame{
         //                                         rect,
         //                                         Color::YELLOW).unwrap();
         let mesh = self.left_player.get_mesh(context);
-        graphics::draw(context, &mesh, graphics::DrawParam::default());
+        graphics::draw(context, &mesh, graphics::DrawParam::default())?;
         let mesh = self.right_player.get_mesh(context);
-        graphics::draw(context, &mesh, graphics::DrawParam::default());
+        graphics::draw(context, &mesh, graphics::DrawParam::default())?;
         let mesh = self.ball.get_mesh(context);
-        graphics::draw(context, &mesh, graphics::DrawParam::default());
+        graphics::draw(context, &mesh, graphics::DrawParam::default())?;
         graphics::present(context)
     }
 
