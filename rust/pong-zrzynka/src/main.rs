@@ -53,11 +53,24 @@ impl Racket{
         
     }
 
-    pub fn update(&mut self, dt: f32){
+    pub fn update(&mut self, dt: f32, context: &Context){
+        self.check_border_collisions(dt, context);
+        self.apply_acceleration(dt);
+    }
+
+    fn apply_acceleration(&mut self, dt: f32){
         self.position.x += self.velocity.x*dt + self.acceleration.x*dt*dt/2.0;
         self.position.y += self.velocity.y*dt + self.acceleration.y*dt*dt/2.0;
         self.velocity.x += self.acceleration.x*dt - self.velocity.x*FRICTION*dt;
         self.velocity.y += self.acceleration.y*dt - self.velocity.y*FRICTION*dt;
+    }
+
+    fn check_border_collisions(&mut self, dt: f32, context: &Context){
+        let (_, screen_height) = graphics::drawable_size(context);
+        if self.position.y - RACKET_HEIGHT_HALF <= 0.0 ||
+            self.position.y + RACKET_HEIGHT_HALF >= screen_height{
+            self.velocity.y = 0.0-self.velocity.y;
+        }
     }
 }
 
@@ -89,8 +102,8 @@ impl PongGame{
 impl EventHandler<GameError> for PongGame{
     fn update(&mut self, context: &mut Context) -> Result<(),GameError> {
         let dt = timer::delta(&context).as_secs_f32();
-        self.left_player.update(dt);
-        self.right_player.update(dt);
+        self.left_player.update(dt, context);
+        self.right_player.update(dt, context);
         Ok(())
     }
 
