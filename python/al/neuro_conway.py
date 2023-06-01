@@ -62,6 +62,7 @@ class NcGame:
         self.cell_height = window_height//self.game.get_grid_height()
         self.running = False
         self.clock = pg.time.Clock()
+        self.paused = False
 
     def initialze_pygame(self):
         pg.init()
@@ -69,8 +70,6 @@ class NcGame:
 
     def update(self):
         dt = self.clock.tick()/1000
-
-        print(dt)
         self.game.step(dt)
 
     def draw(self):
@@ -90,17 +89,32 @@ class NcGame:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
+            elif event.type == pg.KEYDOWN:
+                if event.key == ord('q'):
+                    self.running = False
+                elif event.key == ord('p'):
+                    self.paused = not self.paused
+                    self.clock.tick() # To avoid time skips on unpausing
+            elif event.type == pg.MOUSEBUTTONDOWN:
+                mouse_presses = pg.mouse.get_pressed()
+                if mouse_presses[0]:
+                    x, y = pg.mouse.get_pos()
+                    x = x//self.cell_width
+                    y = y//self.cell_height
+                    self.game.grid[x][y] = 1 - self.game.grid[x][y] 
 
     def run(self):
         self.running = True
         while self.running:
             self.draw()
             self.handle_events()
-            self.update()
+            if not self.paused:
+                self.update()
+
 
 
 def main():
-    conway = NeuroConway(100,100,'GLIDER')
+    conway = NeuroConway(100,100,None)
     game = NcGame(conway, 800,800)
     game.initialze_pygame()
     game.run()
