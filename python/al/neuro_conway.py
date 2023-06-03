@@ -139,14 +139,17 @@ class SimulationState:
 
 class KeyboardHandler:
 
-    def __init__(self, simulation_state):
+    def __init__(self, simulation_state, simulation_engine):
         self.simulation_state = simulation_state
+        self.simulation_engine = simulation_engine
 
     def handle_event(self, event):
         if event.key == ord('q'):
             self.simulation_state.running = False
         elif event.key == ord('p'):
             self.simulation_state.toggle_pause()
+        elif event.key == ord('a'):
+            self.simulation_engine.plot_activations()
 
 class MouseHandler:
 
@@ -169,7 +172,7 @@ class SimulationEngine:
         self.cell_grid=cell_grid 
         self.display = display
         self.state = SimulationState()
-        self.keyboard = KeyboardHandler(self.state)
+        self.keyboard = KeyboardHandler(self.state, self)
         self.mouse = MouseHandler(self.state, self.display, self.cell_grid)
 
     def init(self):
@@ -177,10 +180,11 @@ class SimulationEngine:
         self.display.init()
         self.state.init()
         
-        #possible_neighborhood_values = np.linspace(0,8,100);
-        #state_changes = NeuroConway.calculate_state_change(possible_neighborhood_values,1) 
-        #plt.plot(possible_neighborhood_values, state_changes)
-        #plt.show()
+    def plot_activations(self):
+        aggergation_vector = np.linspace(0,8,100);
+        activation_vector = self.cell_grid.activation(aggergation_vector,1) 
+        plt.plot(aggergation_vector, activation_vector)
+        plt.show()
 
     def handle_events(self):
         for event in pg.event.get():
@@ -235,6 +239,7 @@ def main(args):
     display = Display(args.window_shape, args.grid_shape)
     game = SimulationEngine(conway, display)
     game.init()
+    #game.plot_activations()
     game.run()
 
 if __name__ == '__main__':
