@@ -13,7 +13,17 @@ BRIGHTNESS_RANGE = MAX_BRIGHTNESS-BACKGROUND_BRIGHTNESS
 
 class AggregationFunction:
 
-    def __init__(self,)
+    CONWAY_KERNEL = np.array([
+        [1.0, 1.0, 1.0],
+        [1.0, 0.0, 1.0],
+        [1.0, 1.0, 1.0]
+        ])
+
+    def __init__(self, kernel=None):
+        self.kernel = kernel if kernel is not None else AggregationFunction.CONWAY_KERNEL
+    
+    def __call__(self, cell_grid):
+        return cv2.filter2D(src=cell_grid, ddepth=-1, kernel=self.kernel)
 
 class ActivationFunction:
 
@@ -24,19 +34,22 @@ class ActivationFunction:
         self.scale = scale
         self.shift = shift
 
-    def __call__(self, agreagation_value, dt):
-        exponent = -np.power(agreagation_value - self.median, self.power) / self.div_squared
+    def __call__(self, agreagation_grid, dt):
+        exponent = -np.power(agreagation_grid - self.median, self.power) / self.div_squared
         state_change = self.scale * np.exp(exponent) + self.shift
         return state_change * dt
         
+class UpdateFunction:
+
+    def __init__(self):
+        pass
+
+    def __call__(self, cell_grid, activation_grid):
+        new_cell_grid = cell_grid + activation_grid
+        return np.maximum(np.minimum(new_cell_grid,1),0)
 
 class NeuroConway:
 
-    NEIGHBORHOOD_KERNEL = np.array([
-        [1.0, 1.0, 1.0],
-        [1.0, 0.0, 1.0],
-        [1.0, 1.0, 1.0]
-        ])
 
     GLIDER = np.array([
         [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -47,15 +60,13 @@ class NeuroConway:
         ])
 
     def __init__(self, width, height, initial_state=None):
-        if initial_state is None:
-            self.grid = np.zeros((width, height))
-        elif initial_state == 'RANDOM':
-            self.grid = np.random.random((width, height))
-        elif initial_state == 'GLIDER':
+        self.agregation = AggregationFunction()
+        self.activation = ActivationFunction()
+        self.update = UpdateFunction()
+        self.grid = np.zeros((width, height))
+        if initial_state == 'GLIDER':
             self.grid = np.zeros((width, height))
             self.grid[50:55, 50:55] = NeuroConway.GLIDER
-        else:
-            raise KeyError(f'NO initial state {initial_state} for automata')
 
     def get_grid_height(self):
         return self.grid.shape[1]
@@ -63,24 +74,11 @@ class NeuroConway:
     def get_grid_width(self):
         return self.grid.shape[0]
 
-# 3,5 
-
-    @staticmethod
-    def calculate_state_change(neighborhood, dt, median=2, div_squared=4, power=2, scale=2, shift=-1):
-        state_change = scale*np.exp(-np.power(neighborhood - median, power)/div_squared) + shift
-        return state_change * dt
-
-    @staticmethod
-    def activation_function(previous_state, state_change):
-        new_state = previous_state + state_change
-        return np.maximum(np.minimum(new_state,1),0)
-
 
     def step(self, dt):
-        next_grid = cv2.filter2D(src=self.grid, ddepth=-1, kernel=NeuroConway.NEIGHBORHOOD_KERNEL)
-        state_change = NeuroConway.calculate_state_change(next_grid, dt)
-        next_grid = NeuroConway.activation_function(self.grid, state_change)
-        self.grid = next_grid
+        agreagation_grid = self.agregation(self.grid)
+        activation_grid = self.activation(agreagation_grid, dt)
+        self.grid = self.update(self.grid, activation_grid)
 
 class NcGame:
 
@@ -98,10 +96,10 @@ class NcGame:
         pg.init()
         self.screen = pg.display.set_mode((self.window_width, self.window_height))
         
-        possible_neighborhood_values = np.linspace(0,8,100);
-        state_changes = NeuroConway.calculate_state_change(possible_neighborhood_values,1) 
-        plt.plot(possible_neighborhood_values, state_changes)
-        plt.show()
+        #possible_neighborhood_values = np.linspace(0,8,100);
+        #state_changes = NeuroConway.calculate_state_change(possible_neighborhood_values,1) 
+        #plt.plot(possible_neighborhood_values, state_changes)
+        #plt.show()
 
 
     def update(self):
