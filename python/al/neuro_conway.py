@@ -3,10 +3,6 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
-BACKGROUND_BRIGHTNESS = 50
-MAX_BRIGHTNESS = 255
-BRIGHTNESS_RANGE = MAX_BRIGHTNESS-BACKGROUND_BRIGHTNESS
-
 #==================================================================================================
 #                                   CELLULAR SYSTEM MECHANICS
 #==================================================================================================
@@ -103,7 +99,7 @@ class Display:
     def draw_grid_cell(self, cell_grid):
         for x in range(cell_grid.get_grid_width()):
             for y in range(cell_grid.get_grid_height()):
-                cell_brightness = BACKGROUND_BRIGHTNESS+cell_grid.grid[x][y]*BRIGHTNESS_RANGE
+                cell_brightness = Display.BACKGROUND_BRIGHTNESS+cell_grid.grid[x][y]*Display.BRIGHTNESS_RANGE
                 cell_brightness = (cell_brightness, cell_brightness, cell_brightness)
                 try:
                     pg.draw.rect(self.screen,
