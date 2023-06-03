@@ -126,6 +126,7 @@ class SimulationState:
         self.clock = pg.time.Clock()
     
     def init(self):
+        self.running = True
         self.clock.tick()
 
     def tick(self):
@@ -138,12 +139,41 @@ class SimulationState:
             self.clock.tick()
         self.paused = not self.paused
 
+
+class KeyboardHandler:
+
+    def __init__(self, simulation_state):
+        self.simulation_state = simulation_state
+
+    def handle_event(self, event):
+        if event.key == ord('q'):
+            self.simulation_state.running = False
+        elif event.key == ord('p'):
+            self.simulation_state.toggle_pause()
+
+class MouseHandler:
+
+    def __init__(self, simulation_state, display, cell_grid):
+        self.simulation_state = simulation_state
+        self.display = display
+        self.cell_grid = cell_grid
+
+    def handle_event(self, event):
+        mouse_presses = pg.mouse.get_pressed()
+        if mouse_presses[0]:
+            x, y = pg.mouse.get_pos()
+            x = x//self.display.cell_size[0]
+            y = y//self.display.cell_size[1]
+            self.cell_grid.grid[x][y] = 1 - self.cell_grid.grid[x][y] 
+
 class SimulationEngine:
 
     def __init__(self, game, display):
         self.game = game
         self.display = display
         self.state = SimulationState()
+        self.keyboard = KeyboardHandler(self.state)
+        self.mouse = MouseHandler(self.state, self.display, self.game)
 
     def init(self):
         pg.init()
@@ -158,23 +188,14 @@ class SimulationEngine:
     def handle_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
-                self.running = False
+                self.state.running = False
             elif event.type == pg.KEYDOWN:
-                if event.key == ord('q'):
-                    self.running = False
-                elif event.key == ord('p'):
-                    self.state.toggle_pause()
+                self.keyboard.handle_event(event)
             elif event.type == pg.MOUSEBUTTONDOWN:
-                mouse_presses = pg.mouse.get_pressed()
-                if mouse_presses[0]:
-                    x, y = pg.mouse.get_pos()
-                    x = x//self.display.cell_size[0]
-                    y = y//self.display.cell_size[1]
-                    self.game.grid[x][y] = 1 - self.game.grid[x][y] 
+                self.mouse.handle_event(event)
 
     def run(self):
-        self.running = True
-        while self.running:
+        while self.state.running:
             self.display.draw_grid_cell(self.game)
             self.display.flip()
             self.handle_events()
