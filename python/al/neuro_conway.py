@@ -168,12 +168,12 @@ class MouseHandler:
 
 class SimulationEngine:
 
-    def __init__(self, game, display):
-        self.game = game
+    def __init__(self, cell_grid, display):
+        self.cell_grid=cell_grid 
         self.display = display
         self.state = SimulationState()
         self.keyboard = KeyboardHandler(self.state)
-        self.mouse = MouseHandler(self.state, self.display, self.game)
+        self.mouse = MouseHandler(self.state, self.display, self.cell_grid)
 
     def init(self):
         pg.init()
@@ -196,13 +196,16 @@ class SimulationEngine:
 
     def run(self):
         while self.state.running:
-            self.display.draw_grid_cell(self.game)
+            self.display.draw_grid_cell(self.cell_grid)
             self.display.flip()
             self.handle_events()
             dt = self.state.tick()
-            self.game.step(dt)
+            self.cell_grid.step(dt)
 
 
+#==================================================================================================
+#                                MAIN FUNCTION AND ARGUMENT PARSING 
+#==================================================================================================
 
 def main():
     grid_shape = (100, 100)
