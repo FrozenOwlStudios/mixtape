@@ -59,11 +59,11 @@ class NeuroConway:
         [0.0, 0.0, 0.0, 0.0, 0.0],
         ])
 
-    def __init__(self, width, height, initial_state=None):
+    def __init__(self, shape, initial_state=None):
         self.agregation = AggregationFunction()
         self.activation = ActivationFunction()
         self.update = UpdateFunction()
-        self.grid = np.zeros((width, height))
+        self.grid = np.zeros(shape)
         if initial_state == 'GLIDER':
             self.grid = np.zeros((width, height))
             self.grid[50:55, 50:55] = NeuroConway.GLIDER
@@ -74,51 +74,87 @@ class NeuroConway:
     def get_grid_width(self):
         return self.grid.shape[0]
 
-
     def step(self, dt):
+        if dt==0:
+            return
         agreagation_grid = self.agregation(self.grid)
         activation_grid = self.activation(agreagation_grid, dt)
         self.grid = self.update(self.grid, activation_grid)
 
-class NcGame:
 
-    def __init__(self, game, window_height, window_width):
-        self.game = game
-        self.window_width = window_width
-        self.window_height = window_height
-        self.cell_width = window_width//self.game.get_grid_width()
-        self.cell_height = window_height//self.game.get_grid_height()
+#==================================================================================================
+#                                   PYGAME INTERFACE 
+#==================================================================================================
+
+class Display:
+    
+    BACKGROUND_BRIGHTNESS = 50
+    MAX_BRIGHTNESS = 255
+    BRIGHTNESS_RANGE = MAX_BRIGHTNESS-BACKGROUND_BRIGHTNESS
+
+    def __init__(self, window_size, grid_size):
+        self.window_size = window_size
+        self.cell_size = (window_size[0]//grid_size[0], window_size[1]//grid_size[1])
+        self.screen = None
+
+    def init(self):
+        self.screen = pg.display.set_mode(self.window_size)
+
+    def draw_grid_cell(self, cell_grid):
+        for x in range(cell_grid.get_grid_width()):
+            for y in range(cell_grid.get_grid_height()):
+                cell_brightness = BACKGROUND_BRIGHTNESS+cell_grid.grid[x][y]*BRIGHTNESS_RANGE
+                cell_brightness = (cell_brightness, cell_brightness, cell_brightness)
+                try:
+                    pg.draw.rect(self.screen,
+                                 cell_brightness,
+                                (x*self.cell_size[0], y*self.cell_size[1], self.cell_size[0], self.cell_size[1]))
+                except ValueError:
+                    print(f'Problematic color {cell_brightness}')
+
+    def flip(self):
+        pg.display.flip() 
+
+
+class SimulationState:
+
+    MILLISECOND_TO_SECOND_RATIO = 1000
+
+    def __init__(self):
         self.running = False
-        self.clock = pg.time.Clock()
         self.paused = False
+        self.clock = pg.time.Clock()
+    
+    def init(self):
+        self.clock.tick()
 
-    def initialze_pygame(self):
+    def tick(self):
+        if not self.paused:
+            return self.clock.tick()/SimulationState.MILLISECOND_TO_SECOND_RATIO
+        return 0
+
+    def toggle_pause(self):
+        if self.paused:
+            self.clock.tick()
+        self.paused = not self.paused
+
+class SimulationEngine:
+
+    def __init__(self, game, display):
+        self.game = game
+        self.display = display
+        self.state = SimulationState()
+
+    def init(self):
         pg.init()
-        self.screen = pg.display.set_mode((self.window_width, self.window_height))
+        self.display.init()
+        self.state.init()
         
         #possible_neighborhood_values = np.linspace(0,8,100);
         #state_changes = NeuroConway.calculate_state_change(possible_neighborhood_values,1) 
         #plt.plot(possible_neighborhood_values, state_changes)
         #plt.show()
 
-
-    def update(self):
-        dt = self.clock.tick()/1000
-        self.game.step(dt)
-
-    def draw(self):
-        for x in range(self.game.get_grid_width()):
-            for y in range(self.game.get_grid_height()):
-                cell_brightness = BACKGROUND_BRIGHTNESS+self.game.grid[x][y]*BRIGHTNESS_RANGE
-                cell_brightness = (cell_brightness, cell_brightness, cell_brightness)
-                try:
-                    pg.draw.rect(self.screen,
-                                 cell_brightness,
-                                (x*self.cell_width, y*self.cell_height, self.cell_width, self.cell_height))
-                except ValueError:
-                    print(f'Problematic color {cell_brightness}')
-        pg.display.flip() 
-    
     def handle_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -127,30 +163,33 @@ class NcGame:
                 if event.key == ord('q'):
                     self.running = False
                 elif event.key == ord('p'):
-                    self.paused = not self.paused
-                    self.clock.tick() # To avoid time skips on unpausing
+                    self.state.toggle_pause()
             elif event.type == pg.MOUSEBUTTONDOWN:
                 mouse_presses = pg.mouse.get_pressed()
                 if mouse_presses[0]:
                     x, y = pg.mouse.get_pos()
-                    x = x//self.cell_width
-                    y = y//self.cell_height
+                    x = x//self.display.cell_size[0]
+                    y = y//self.display.cell_size[1]
                     self.game.grid[x][y] = 1 - self.game.grid[x][y] 
 
     def run(self):
         self.running = True
         while self.running:
-            self.draw()
+            self.display.draw_grid_cell(self.game)
+            self.display.flip()
             self.handle_events()
-            if not self.paused:
-                self.update()
+            dt = self.state.tick()
+            self.game.step(dt)
 
 
 
 def main():
-    conway = NeuroConway(100,100,None)
-    game = NcGame(conway, 800,800)
-    game.initialze_pygame()
+    grid_shape = (100, 100)
+    window_shape = (800, 800)
+    conway = NeuroConway(grid_shape,None)
+    display = Display(window_shape, grid_shape)
+    game = SimulationEngine(conway, display)
+    game.init()
     game.run()
 
 if __name__ == '__main__':
