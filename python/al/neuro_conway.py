@@ -1,7 +1,7 @@
 import pygame as pg
 import numpy as np
 import cv2
-
+import matplotlib.pyplot as plt
 
 BACKGROUND_BRIGHTNESS = 50
 MAX_BRIGHTNESS = 255
@@ -40,16 +40,23 @@ class NeuroConway:
     def get_grid_width(self):
         return self.grid.shape[0]
 
+# 3,5 
+
     @staticmethod
-    def activation_function(previous_state, neighborhood, dt):
-        state_change = 2*np.exp(-np.power(neighborhood - 3, 2)) - 1
-        state_change = state_change * dt
+    def calculate_state_change(neighborhood, dt, median=2, div_squared=4, power=2, scale=2, shift=-1):
+        state_change = scale*np.exp(-np.power(neighborhood - median, power)/div_squared) + shift
+        return state_change * dt
+
+    @staticmethod
+    def activation_function(previous_state, state_change):
         new_state = previous_state + state_change
         return np.maximum(np.minimum(new_state,1),0)
 
+
     def step(self, dt):
         next_grid = cv2.filter2D(src=self.grid, ddepth=-1, kernel=NeuroConway.NEIGHBORHOOD_KERNEL)
-        next_grid = NeuroConway.activation_function(self.grid, next_grid, dt)
+        state_change = NeuroConway.calculate_state_change(next_grid, dt)
+        next_grid = NeuroConway.activation_function(self.grid, state_change)
         self.grid = next_grid
 
 class NcGame:
@@ -67,6 +74,12 @@ class NcGame:
     def initialze_pygame(self):
         pg.init()
         self.screen = pg.display.set_mode((self.window_width, self.window_height))
+        
+        possible_neighborhood_values = np.linspace(0,8,100);
+        state_changes = NeuroConway.calculate_state_change(possible_neighborhood_values,1) 
+        plt.plot(possible_neighborhood_values, state_changes)
+        plt.show()
+
 
     def update(self):
         dt = self.clock.tick()/1000
