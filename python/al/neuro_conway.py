@@ -56,14 +56,14 @@ class NeuroConway:
         [0.0, 0.0, 0.0, 0.0, 0.0],
         ])
 
-    def __init__(self, shape, initial_state=None):
-        self.agregation = AggregationFunction()
-        self.activation = ActivationFunction()
-        self.update = UpdateFunction()
+    def __init__(self, shape, agregation, activation, update):
+        self.agregation = agregation
+        self.activation = activation 
+        self.update = update 
         self.grid = np.zeros(shape)
-        if initial_state == 'GLIDER':
-            self.grid = np.zeros((width, height))
-            self.grid[50:55, 50:55] = NeuroConway.GLIDER
+        #if initial_state == 'GLIDER':
+        #    self.grid = np.zeros((width, height))
+        #    self.grid[50:55, 50:55] = NeuroConway.GLIDER
 
     def get_grid_height(self):
         return self.grid.shape[1]
@@ -209,14 +209,29 @@ def size2D(txt):
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
+    parser.add_argument('-m', '--median', type=float, default=3.0,
+                        help='Median of activation function')
+    parser.add_argument('-d', '--divergence_squared', type=float, default=4.0,
+                        help='Parameter that effects width of curve')
+    parser.add_argument('-p', '--power', type=int, default=2,
+                        help='Power used in activation function')
+    parser.add_argument('-s', '--scale', type=float, default=2.0,
+                        help='Scale used in activation function')
+    parser.add_argument('-f', '--shift', type=float, default=-1.0,
+                        help='Shift used in activation function')
     parser.add_argument('--grid_shape', type=size2D, default=(100, 100),
                         help='Size of cellular grid')
     parser.add_argument('--window_shape', type=size2D, default=(800, 800),
                         help='Size of program main window in pixels')
     return parser.parse_args()
 
+#median=2, div_squared=4, power=2, scale=2, shift=-1):
 def main(args):
-    conway = NeuroConway(args.grid_shape,None)
+    agregation = AggregationFunction()
+    activation = ActivationFunction(args.median, args.divergence_squared, args.power,
+                                    args.scale, args.shift)
+    update = UpdateFunction()
+    conway = NeuroConway(args.grid_shape, agregation, activation, update)
     display = Display(args.window_shape, args.grid_shape)
     game = SimulationEngine(conway, display)
     game.init()
