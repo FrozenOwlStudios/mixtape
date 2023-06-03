@@ -7,6 +7,29 @@ BACKGROUND_BRIGHTNESS = 50
 MAX_BRIGHTNESS = 255
 BRIGHTNESS_RANGE = MAX_BRIGHTNESS-BACKGROUND_BRIGHTNESS
 
+#==================================================================================================
+#                                   CELLULAR SYSTEM MECHANICS
+#==================================================================================================
+
+class AggregationFunction:
+
+    def __init__(self,)
+
+class ActivationFunction:
+
+    def __init__(self, median=2, div_squared=4, power=2, scale=2, shift=-1):
+        self.median = median
+        self.div_squared = div_squared
+        self.power = power
+        self.scale = scale
+        self.shift = shift
+
+    def __call__(self, agreagation_value, dt):
+        exponent = -np.power(agreagation_value - self.median, self.power) / self.div_squared
+        state_change = self.scale * np.exp(exponent) + self.shift
+        return state_change * dt
+        
+
 class NeuroConway:
 
     NEIGHBORHOOD_KERNEL = np.array([
