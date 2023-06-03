@@ -1,3 +1,4 @@
+import argparse
 import pygame as pg
 import numpy as np
 import cv2
@@ -203,14 +204,24 @@ class SimulationEngine:
 #                                MAIN FUNCTION AND ARGUMENT PARSING 
 #==================================================================================================
 
-def main():
-    grid_shape = (100, 100)
-    window_shape = (800, 800)
-    conway = NeuroConway(grid_shape,None)
-    display = Display(window_shape, grid_shape)
+def size2D(txt):
+    return tuple(map(int,txt.split('x')))
+
+def parse_arguments():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--grid_shape', type=size2D, default=(100, 100),
+                        help='Size of cellular grid')
+    parser.add_argument('--window_shape', type=size2D, default=(800, 800),
+                        help='Size of program main window in pixels')
+    return parser.parse_args()
+
+def main(args):
+    conway = NeuroConway(args.grid_shape,None)
+    display = Display(args.window_shape, args.grid_shape)
     game = SimulationEngine(conway, display)
     game.init()
     game.run()
 
 if __name__ == '__main__':
-    main()
+    args = parse_arguments()
+    main(args)
