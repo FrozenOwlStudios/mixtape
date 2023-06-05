@@ -141,15 +141,14 @@ class SimulationState:
 
 class KeyboardHandler:
 
-    def __init__(self, simulation_state, simulation_engine):
-        self.simulation_state = simulation_state
+    def __init__(self, simulation_engine):
         self.simulation_engine = simulation_engine
 
     def handle_event(self, event):
         if event.key == ord('q'):
-            self.simulation_state.running = False
+            self.simulation_engine.state.running = False
         elif event.key == ord('p'):
-            self.simulation_state.toggle_pause()
+            self.simulation_engine.state.toggle_pause()
         elif event.key == ord('a'):
             self.simulation_engine.plot_activations()
         elif event.key == ord('r'):
@@ -157,18 +156,16 @@ class KeyboardHandler:
 
 class MouseHandler:
 
-    def __init__(self, simulation_state, display, cell_grid):
-        self.simulation_state = simulation_state
-        self.display = display
-        self.cell_grid = cell_grid
+    def __init__(self, simulation_engine):
+        self.simulation_engine = simulation_engine
 
     def handle_event(self, event):
         mouse_presses = pg.mouse.get_pressed()
         if mouse_presses[0]:
             x, y = pg.mouse.get_pos()
-            x = x//self.display.cell_size[0]
-            y = y//self.display.cell_size[1]
-            self.cell_grid.grid[x][y] = 1 - self.cell_grid.grid[x][y] 
+            x = x//self.simulation_engine.display.cell_size[0]
+            y = y//self.simulation_engine.display.cell_size[1]
+            self.simulation_engine.cell_grid.grid[x][y] = 1 - self.simulation_engine.cell_grid.grid[x][y] 
 
 class SimulationEngine:
 
@@ -176,8 +173,8 @@ class SimulationEngine:
         self.cell_grid=cell_grid 
         self.display = display
         self.state = SimulationState()
-        self.keyboard = KeyboardHandler(self.state, self)
-        self.mouse = MouseHandler(self.state, self.display, self.cell_grid)
+        self.keyboard = KeyboardHandler(self)
+        self.mouse = MouseHandler(self)
 
     def init(self):
         pg.init()
