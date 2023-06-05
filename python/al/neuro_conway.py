@@ -78,6 +78,8 @@ class NeuroConway:
         activation_grid = self.activation(agreagation_grid, dt)
         self.grid = self.update(self.grid, activation_grid)
 
+    def reset(self):
+        self.grid = np.zeros(self.grid.shape)
 
 #==================================================================================================
 #                                   PYGAME INTERFACE 
@@ -150,6 +152,8 @@ class KeyboardHandler:
             self.simulation_state.toggle_pause()
         elif event.key == ord('a'):
             self.simulation_engine.plot_activations()
+        elif event.key == ord('r'):
+            self.simulation_engine.cell_grid.reset()
 
 class MouseHandler:
 
