@@ -1,0 +1,49 @@
+{
+    "name": "Generic NLP container",
+    "workspaceFolder": "/home/blenter",
+    "workspaceMount": "source=${localWorkspaceFolder},target=/home/blenter,type=bind",
+    "remoteUser": "blenter",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "service": "app",
+        "args": {
+            "USERNAME": "blenter"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "python.defaultInterpreterPath": "/usr/local/bin/python",
+                "editor.formatOnSave": true
+            },
+            "extensions": [
+                "ms-python.python",
+                "golang.go",
+                "ms-toolsai.jupyter",
+                "ms-azuretools.vscode-docker",
+                "batisteo.vscode-django",
+                "ms-python.black-formatter"
+            ]
+        }
+    },
+    "postCreateCommand": "pip check || true",
+    "forwardPorts": [
+        8000,
+        8080,
+        8888
+    ],
+    "runArgs": [
+        "--net=host",
+        "--pid=host",
+        "--ipc=host",
+        "--hostname=container",
+        "-e",
+        "DISPLAY=${env:DISPLAY}"
+    ],
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind",
+        "source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind,consistency=cached",
+        "source=/dev/dri,target=/dev/dri,type=bind,consistency=cached"
+    ]
+}

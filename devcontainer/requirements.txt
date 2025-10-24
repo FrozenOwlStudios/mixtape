@@ -1,0 +1,46 @@
+
+#=========================== GENERAL MACHINE LEARNING ========================== 
+numpy
+pandas
+scipy
+scikit-learn
+jupyter
+notebook
+torch
+torchvision
+torchaudio
+
+#====================================== NLP ==================================== 
+spacy
+nltk
+#gensim
+ply
+unstructured
+unstructured-inference
+#polyglot
+pdfminer.six
+pi_heif
+
+#====================================== LLM ==================================== 
+transformers
+datasets
+sentencepiece
+langchain
+openai
+huggingface_hub
+peft
+langchain
+
+#====================================== WEB ==================================== 
+fastapi
+uvicorn
+django
+djangorestframework
+gunicorn
+
+#==================================== OTHERS =================================== 
+black
+flake8
+mypy
+pytest
+pydantic

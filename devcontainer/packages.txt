@@ -1,0 +1,31 @@
+# To install packages from this file run following command in same folder
+# cat packages.txt | sed '/^#/d' | xargs sudo aptitude install
+
+curl
+wget
+git
+build-essential
+gcc
+g++
+make
+golang-go
+pkg-config
+libffi-dev
+libssl-dev
+
+postgresql
+postgresql-client
+redis-server 
+rabbitmq-server 
+
+supervisor 
+ffmpeg
+libsndfile1
+portaudio19-dev 
+libgl1
+libglib2.0-0 
+libspatialindex-dev 
+ca-certificates 
+
+antlr4
+tesseract-ocr
