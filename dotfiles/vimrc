@@ -1,0 +1,103 @@
+
+" ----- Basic Behavior -----
+set nocompatible
+set backspace=indent,eol,start
+set hidden
+set mouse=a
+set number
+set relativenumber
+set ruler
+set nocursorline
+set nowrap
+set laststatus=2
+set showcmd
+set showmode
+
+" ----- Search -----
+set ignorecase
+set smartcase
+set incsearch
+set hlsearch
+
+" ----- Indentation -----
+set autoindent
+set smartindent
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" ----- Clipboard support (if available) -----
+if has("clipboard")
+  set clipboard=unnamedplus
+endif
+
+" ----- Persistent Undo -----
+if has("persistent_undo")
+  set undodir=~/.vim/undodir
+  silent !mkdir -p ~/.vim/undodir
+  set undofile
+endif
+
+" ----- Ctrl+S to Save -----
+" Use terminal escape for Ctrl+S
+nnoremap <C-s> :w<CR>
+inoremap <C-s> <Esc>:w<CR>a
+vnoremap <C-s> <Esc>:w<CR>gv
+
+" ----- Tab Navigation -----
+nnoremap <C-]> :tabnext<CR>
+nnoremap <C-[> :tabprevious<CR>
+
+" ----- Toggle Relative/Absolute Line Numbers (F3) -----
+function! ToggleRelNumber()
+  if &relativenumber
+    set norelativenumber number
+  else
+    set relativenumber
+  endif
+endfunction
+nnoremap <F3> :call ToggleRelNumber()<CR>
+
+" ----- Toggle underline in cursor row (F2) -----
+function! ToggleCursorline()
+  if &cursorline
+    set nocursorline
+  else
+    set cursorline
+  endif
+endfunction
+nnoremap <F4> :call ToggleCursorline()<CR>
+
+" ----- Quality of Life -----
+set scrolloff=8         " Keep lines above/below cursor
+set sidescrolloff=8
+set noerrorbells
+set visualbell
+set ttyfast
+set updatetime=300
+set colorcolumn=80,100,120
+highlight ColorColumn ctermbg=darkgray guibg=#3a3a3a
+
+" ----- Helpful Remaps -----
+" Better window navigation
+nnoremap <C-h> <C-w>h
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap <C-l> <C-w>l
+
+" Center cursor after search and scroll
+nnoremap n nzzzv
+nnoremap N Nzzzv
+nnoremap <C-d> <C-d>zz
+nnoremap <C-u> <C-u>zz
+
+" Clear search with <leader>/
+nnoremap <leader>/ :nohlsearch<CR>
+
+" ----- Tabs -----
+set tabpagemax=50
+set showtabline=2
+
+" ----- Filetype Plugin Indent -----
+filetype plugin indent on
+syntax on
