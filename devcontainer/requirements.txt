@@ -20,6 +20,7 @@ unstructured-inference
 #polyglot
 pdfminer.six
 pi_heif
+stanza
 
 #====================================== LLM ==================================== 
 transformers
