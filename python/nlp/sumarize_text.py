@@ -128,11 +128,13 @@ class WordFilter:
 
     stop_words_: Set[str]
     allowed_tags_: List[str]
+    working_on_list_: bool
 
-    def __init__(self, lang: str= 'english',
+    def __init__(self, working_on_list: bool, lang: str= 'english',
                  extra_stopwords: Optional[Iterable[str]]= None,
                  allowed_tags: Iterable[str]= DEFAULT_ALLOWED_TAGS)-> None:
         # FIXME: Add more usefull exception wrapping
+        self.working_on_list_ = working_on_list
         self.stop_words_ = set(stopwords.words(lang))
         if extra_stopwords:
             for word in extra_stopwords:
@@ -140,8 +142,9 @@ class WordFilter:
         self.allowed_tags_ = allowed_tags
 
     def __call__(self, text: List[str]|str)-> List[str]|str:
-        working_on_list = not isinstance(text,str)
+        working_on_list = self.working_on_list_
         tokens = text if working_on_list else word_tokenize(text)
+        print(tokens)
         filtered = [word for word in tokens if word not in self.stop_words_]
         pos_tags = pos_tag(filtered)
         filtered = [word for word, pos in pos_tags if pos in self.allowed_tags_]
@@ -155,7 +158,7 @@ class WordFilter:
 
 def process_text_file(source_text: str, cfg: Config)-> Dict[str, float] :
     misc_symbols = re.compile(r'[^\w\s]+') 
-    allowed_words = WordFilter(lang=cfg.lang, extra_stopwords=cfg.stopwords)
+    allowed_words = WordFilter(True, lang=cfg.lang, extra_stopwords=cfg.stopwords)
 
     alphanumeric_text = misc_symbols.sub(' ', source_text)
     words = word_tokenize(alphanumeric_text)
@@ -171,7 +174,7 @@ def get_tokenized_sentences(source_text: str, cfg: Config):
     endlines = re.compile(r'\n')
     whitespaces = re.compile(r'[\s]+')
     misc_symbols = re.compile(r'[^\w\s]+') 
-    allowed_words = WordFilter(lang=cfg.lang, extra_stopwords=cfg.stopwords)
+    allowed_words = WordFilter(False, lang=cfg.lang, extra_stopwords=cfg.stopwords)
 
     sentences = sent_tokenize(source_text)
     tokenized = map(lambda s: s.lower(), sentences)
@@ -184,8 +187,10 @@ def get_tokenized_sentences(source_text: str, cfg: Config):
 
 def calculate_scores(word_scores, sentences):
     sent_strength={}
+    print(sentences)
     for sent in sentences:
-        for word in sent[1]:
+        for word in sent[1].split(' '):
+           # print(word)
             if word in word_scores.keys():
                 if sent in sent_strength.keys():
                     sent_strength[sent]+=word_scores[word]
@@ -206,15 +211,21 @@ def main(argv: Optional[Sequence[str]] = None) -> None:
     with open(cfg.source_text, 'r') as txt:
         text = txt.read()
     word_scores = process_text_file(text, cfg)
+    print(f'Word scores size = {len(word_scores)}')
     sentences = get_tokenized_sentences(text,cfg)
+    print(len(sentences))
     sentence_scores = calculate_scores(word_scores, sentences)
+    print(len(sentence_scores))
     sorted_sentences = sorted(sentence_scores.items(), key=lambda kv: (kv[1], kv[0]), reverse=True)
+    print(len(sorted_sentences))
     top_10 = sorted_sentences[:10]
     for sentence in top_10:
         print('-------------------------------------')
         print(f'Sentence score - {sentence[1]}')
         print(sentence[0][0])
         print('-------------------------------------')
+    for sentence in top_10:
+        print(sentence[0][0])
 
 if __name__ == '__main__':
     main()
