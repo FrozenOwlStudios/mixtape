@@ -32,6 +32,20 @@ from nltk import pos_tag
 from heapq import nlargest
 
 # ==================================================================================================
+#                                      NLTK RESOURCES 
+# ==================================================================================================
+NLTK_RESOURCES: Final[List[str]] = [
+    'stopwords',
+    'punkt_tab',
+    'averaged_perceptron_tagger_eng'
+]
+
+def download_nltk_resources():
+    for res in NLTK_RESOURCES:
+        nltk.download(res)
+
+
+# ==================================================================================================
 #                             CONFIGURATION AND ARGUMENT PARSING
 # ==================================================================================================
 
