@@ -1,5 +1,5 @@
 # To install packages from this file run following command in same folder
-# cat packages.txt | sed '/^#/d' | xargs sudo aptitude install
+# cat packages.txt | sed '/^#/d' | xargs sudo aptitude install -y
 
 curl
 wget
@@ -8,7 +8,6 @@ build-essential
 gcc
 g++
 make
-golang-go
 pkg-config
 libffi-dev
 libssl-dev
