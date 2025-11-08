@@ -45,13 +45,13 @@ require("lazy").setup({
   -- Language-specific
   { "Vimjas/vim-python-pep8-indent" },
   { "psf/black", branch = "stable" },
-  { "fatih/vim-go", build = ":GoUpdateBinaries" },
 
   -- Git
   { "lewis6991/gitsigns.nvim" },
 
   -- Theme
   { "gruvbox-community/gruvbox" },
+  {"lmintmate/blue-mood-vim"},
 })
 
 -- Theme
@@ -76,9 +76,9 @@ require("gitsigns").setup()
 -- Mason setup
 require("mason").setup()
 require("mason-lspconfig").setup({
-  ensure_installed = { "pyright", "gopls" },
+  ensure_installed = { "pyright",},
  })
-vim.lsp.config('*', {ensure_installed = { "pyright", "gopls" }})
+vim.lsp.config('*', {ensure_installed = { "pyright",}})
 
 -- LSP setup
 -- local lspconfig = require("lspconfig")
@@ -111,9 +111,5 @@ vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { desc = "File explo
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*.py",
   command = "silent! execute ':Black'",
-})
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*.go",
-  command = "silent! execute ':GoFmt'",
 })
 
