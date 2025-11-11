@@ -22,11 +22,11 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 PL_LABEL_NAMES= {0: 'negatywny',
                  1: 'neutralny',
                  2: 'pozytywny'}
+CHECKPOINT = 'eevvgg/PaReS-sentimenTw-political-PL'
 
 def main():
-    checkpoint = 'eevvgg/PaReS-sentimenTw-political-PL'
-    tokenizer = AutoTokenizer.from_pretrained(checkpoint)
-    model = AutoModelForSequenceClassification.from_pretrained(checkpoint)
+    tokenizer = AutoTokenizer.from_pretrained(CHECKPOINT)
+    model = AutoModelForSequenceClassification.from_pretrained(CHECKPOINT)
     
     print('Wpisz wypowiedź by otrzymać ocenę jej wydźwięku albo "STOP" '
           'żeby zakończyć działanie programu.')
@@ -38,7 +38,7 @@ def main():
         output = model(**tokens)
         predictions = torch.nn.functional.softmax(output.logits, dim=-1)
         classification = predictions.argmax(1)
-        print(f'Twoja wypowiedź ma {PL_LABEL_NAMES[classification.item()]} charakter.')    
+        print(f'Twoja wypowiedź ma {PL_LABEL_NAMES[int(classification.item())]} charakter.')    
 
 if __name__ == '__main__':
     main()
