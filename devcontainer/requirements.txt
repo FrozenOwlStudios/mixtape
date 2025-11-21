@@ -9,6 +9,7 @@ notebook
 torch
 torchvision
 torchaudio
+seaborn
 
 #====================================== NLP ==================================== 
 spacy
@@ -45,3 +46,4 @@ flake8
 mypy
 pytest
 pydantic
+PyQt5

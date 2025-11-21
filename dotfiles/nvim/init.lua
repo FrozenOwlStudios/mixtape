@@ -12,6 +12,7 @@ vim.opt.splitright = true
 vim.opt.clipboard = "unnamedplus"
 vim.opt.cursorline = true
 vim.opt.signcolumn = "yes"
+vim.opt.colorcolumn = "80,100,120"
 
 -- Bootstrap lazy.nvim plugin manager
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -106,6 +107,10 @@ vim.keymap.set("n", "<leader>ff", "<cmd>Telescope find_files<cr>", { desc = "Fin
 vim.keymap.set("n", "<leader>fg", "<cmd>Telescope live_grep<cr>", { desc = "Live grep" })
 vim.keymap.set("n", "<leader>fb", "<cmd>Telescope buffers<cr>", { desc = "Find buffers" })
 vim.keymap.set("n", "<leader>e", "<cmd>NvimTreeToggle<cr>", { desc = "File explorer" })
+
+for i = 1, 9 do
+  vim.keymap.set("n", "<leader>" .. i, i .. "gt", { noremap = true, silent = true })
+end
 
 -- Autoformat on save (Python, Go)
 vim.api.nvim_create_autocmd("BufWritePre", {
