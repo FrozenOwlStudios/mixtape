@@ -1,0 +1,42 @@
+#===============================================================================
+#                         NON INTERACTIVE MODE GUARD
+#===============================================================================
+case $- in
+	*i*) ;;
+	*) return ;;
+esac
+
+
+#===============================================================================
+#                          BASHI_IT AND BLE SETUP 
+#===============================================================================
+BASH_IT="/home/frozen_owl/.bash_it"
+BASH_IT_PROJECT_PATHS="${HOME}/Workspaces"
+export BASH_IT_THEME='bobby'
+unset MAILCHECK
+
+source "${BASH_IT?}/bash_it.sh"
+source ~/.local/share/blesh/ble.sh
+
+
+#===============================================================================
+#                            EXTRA ENV CONFIG 
+#===============================================================================
+PATH="/home/frozen_owl/.local/bin:${PATH}"
+
+
+#===============================================================================
+#                                ALIASES 
+#===============================================================================
+if [[ -x /usr/bin/eza ]]; then
+  alias ls='eza -al --color=always --group-directories-first --icons'
+  alias la='eza -a --color=always --group-directories-first --icons'
+  alias ll='eza -l --color=always --group-directories-first --icons'
+  alias lt='eza -aT --color=always --group-directories-first --icons'
+  alias l.='eza -ald --color=always --group-directories-first --icons .*'
+fi
+
+#===============================================================================
+#                               AUTORUN 
+#===============================================================================
+neofetch
