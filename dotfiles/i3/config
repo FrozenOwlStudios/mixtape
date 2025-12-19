@@ -1,0 +1,18 @@
+# i3 config file (v4)
+# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+
+# set modifier
+set $super Mod4
+set $alt Mod1
+floating_modifier $super # Mouse+$super to drag floating windows
+set $refresh_i3status killall -SIGUSR1 i3status
+
+include /home/frozen_owl/.config/i3/paths.config
+include /home/frozen_owl/.config/i3/autostart.config
+include /home/frozen_owl/.config/i3/keybinds.config
+include /home/frozen_owl/.config/i3/windows.config
+include /home/frozen_owl/.config/i3/i3bar.config
+include /home/frozen_owl/.config/i3/gaps.config
+
+
+
