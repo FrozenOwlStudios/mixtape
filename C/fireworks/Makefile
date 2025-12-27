@@ -2,4 +2,4 @@ CC=gcc
 CFLAGS=-I.
 
 fireworks: fireworks.o 
-	$(CC)  fireworks.c -o fireworks
+	$(CC)  -O2 -std=c11 -o fireworks  fireworks.c  -lm

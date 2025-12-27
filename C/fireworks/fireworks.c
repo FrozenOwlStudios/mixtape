@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
+#include <math.h>
 
 //==============================================================================
 //                              BASIC STRUCTURES
@@ -151,7 +152,7 @@ static void particle_spawn_burst(CartDisc pos, int count, float base_speed)
     /* Mixture of ring + random sparks */
     for (int i = 0; i < count; i++)
     {
-        int idx = alloc_particle();
+        int idx = particle_alloc();
         if (idx < 0)
             break;
 
@@ -209,7 +210,6 @@ void firework_spawn(Firework *fws)
         fws[i].exploded = 0;
     }
 }
-
 
 //==============================================================================
 //                               GRAPHICS
@@ -309,7 +309,7 @@ int main(void)
                 if (!fw->exploded)
                 {
                     fw->exploded = 1;
-                    spawn_burst(fw->position.x, fw->position.y, fw->cfg.burst_count, fw->cfg.speed);
+                    particle_spawn_burst(cart_cont_to_disc(fw->position), fw->cfg.burst_count, fw->cfg.speed);
                 }
                 fw->st = FW_DONE;
             }
@@ -351,6 +351,7 @@ int main(void)
         sleep_ms(MS_PER_FRAME);
     }
 
+    term_clear();
     term_show_cursor();
     term_home();
     return 0;
