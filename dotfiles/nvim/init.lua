@@ -15,6 +15,7 @@ vim.opt.termguicolors = true
 vim.opt.updatetime = 200
 vim.opt.signcolumn = "yes"
 vim.opt.wrap = false
+vim.opt.colorcolumn = "80,100,120"
 
 -- Indentation (good defaults for Python)
 vim.opt.expandtab = true
@@ -34,7 +35,7 @@ vim.opt.splitright = true
 vim.opt.splitbelow = true
 
 -- Setting colorscheme
-vim.cmd("colorscheme slate")
+vim.cmd("colorscheme retrobox")
 
 -- ============================================================
 -- Keymaps (multi-file workflow)
