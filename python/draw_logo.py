@@ -26,6 +26,7 @@ EYE_FRONT = (0,0,0)
 EYE_GLIMMER = (255,255,255)
 BEAK = (79,71,61)
 BEAK_LINE = (52,43,34)
+FEET = (52,43,34)
 GRID = (255, 0, 0)
 
 # State
@@ -56,6 +57,15 @@ while running:
     # Fill background with black
     screen.fill(BACKGROUND)
 
+    # Feet
+    for x in range(200,230, 10):
+        pg.draw.rect(screen, FEET, pg.Rect(x, 440, 8, 20))
+        pg.draw.circle(screen, FEET, (x+4,440+20), 4)
+
+    # Feet
+    for x in range(270,300, 10):
+        pg.draw.rect(screen, FEET, pg.Rect(x, 440, 8, 20))
+        pg.draw.circle(screen, FEET, (x+4,440+20), 4)
 
     # Body
     pg.draw.circle(screen, BODY_BACK, (250,300), 150)
@@ -95,6 +105,10 @@ while running:
     for x in range(210,280,20):
         pg.draw.line(screen, BODY_BACK, (x,360), (x+10,390), width=2)
         pg.draw.line(screen, BODY_BACK, (x+10,390), (x+20,360), width=2)
+
+    for x in range(230,260,20):
+        pg.draw.line(screen, BODY_BACK, (x,400), (x+10,430), width=2)
+        pg.draw.line(screen, BODY_BACK, (x+10,430), (x+20,400), width=2)
 
     # Beak
     pg.draw.polygon(screen, BEAK, [
