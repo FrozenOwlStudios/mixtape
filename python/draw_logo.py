@@ -25,6 +25,7 @@ EYE_BACK = (172, 95, 1)
 EYE_FRONT = (0,0,0)
 EYE_GLIMMER = (255,255,255)
 BEAK = (79,71,61)
+BEAK_LINE = (52,43,34)
 GRID = (255, 0, 0)
 
 # State
@@ -56,12 +57,19 @@ while running:
     screen.fill(BACKGROUND)
 
 
-    # Main body
+    # Body
     pg.draw.circle(screen, BODY_BACK, (250,300), 150)
 
-    # Head on top
+    # Head
     pg.draw.circle(screen, BODY_BACK, (250,220), 120)
     pg.draw.circle(screen, HEAD, (250,220), 95)
+    pg.draw.polygon(screen, BODY_BACK, [
+        (200,142),
+        (250,160),
+        (300,142),
+    ])
+    pg.draw.arc(screen, BODY_BACK, pg.Rect((155, 125) , (190, 190)), 1, 2.14, width=25)
+
 
     # Ears (by cutting into head)
     pg.draw.arc(screen, BACKGROUND, pg.Rect((130, 100) , (240, 240)), 1, 2.14, width=25)
@@ -74,7 +82,19 @@ while running:
         (202,442)
         
     ])
-    #pg.draw.arc(screen, GRID, pg.Rect((130, 100) , (240, 240)), 1, 2.14, width=25)
+    pg.draw.arc(screen, BODY_FRONT, pg.Rect((100,150) , (300, 300)), 4.40, 5, width=10)
+
+    for x in range(170,320,20):
+        pg.draw.line(screen, BODY_BACK, (x,280), (x+10,310), width=2)
+        pg.draw.line(screen, BODY_BACK, (x+10,310), (x+20,280), width=2)
+
+    for x in range(190,300,20):
+        pg.draw.line(screen, BODY_BACK, (x,320), (x+10,350), width=2)
+        pg.draw.line(screen, BODY_BACK, (x+10,350), (x+20,320), width=2)
+
+    for x in range(210,280,20):
+        pg.draw.line(screen, BODY_BACK, (x,360), (x+10,390), width=2)
+        pg.draw.line(screen, BODY_BACK, (x+10,390), (x+20,360), width=2)
 
     # Beak
     pg.draw.polygon(screen, BEAK, [
@@ -82,6 +102,7 @@ while running:
         (250,270),
         (280,200),
     ])
+    pg.draw.line(screen, BEAK_LINE, (250,200), (250,270))
 
     
     # Eyes
