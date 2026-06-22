@@ -1,18 +1,348 @@
-# i3 config file (v4)
-# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+###############################################################################
+# i3wm config by Frozen Owl 
+###############################################################################
 
-# set modifier
-set $super Mod4
+# ============================================================================ 
+# Prerequisites 
+# ============================================================================ 
+
+# Install following packages (tested on Xubuntu) :
+# i3 rofi picom nitrogen i3status brightnessctl i3lock dex pavucontrol 
+# playerctl xfce4-screenshooter fonts-jetbrains-mono feh
+
+# Instal Hack nerd font with use of repository:
+# https://github.com/getnf/getnf
+
+# ============================================================================ 
+# Core variables
+# ============================================================================ 
+
+set $mod Mod4
 set $alt Mod1
-floating_modifier $super # Mouse+$super to drag floating windows
-set $refresh_i3status killall -SIGUSR1 i3status
 
-include /home/frozen_owl/.config/i3/paths.config
-include /home/frozen_owl/.config/i3/autostart.config
-include /home/frozen_owl/.config/i3/keybinds.config
-include /home/frozen_owl/.config/i3/windows.config
-include /home/frozen_owl/.config/i3/i3bar.config
-include /home/frozen_owl/.config/i3/gaps.config
+set $term xfce4-terminal
+set $browser firefox
+set $files thunar
+set $editor code
+set $launcher rofi -show drun
+set $run rofi -show run
+set $window_switcher rofi -show window
+set $font Hack Nerd Font Mono Regular 12
+
+# ============================================================================ 
+# Color theme 
+# ============================================================================ 
+set $bg        #111111
+set $fg        #dddddd
+set $muted     #777777
+set $accent    #5f87af
+set $accent2   #87af87
+set $urgent    #af5f5f
+set $border    #333333
+set $focused   #285577
+
+font pango:$font
+
+# ============================================================================ 
+# Autostart 
+# ============================================================================ 
+
+exec --no-startup-id dex --autostart --environment i3
+exec --no-startup-id nm-applet
+exec --no-startup-id blueman-applet
+exec --no-startup-id xfce4-power-manager
+exec --no-startup-id xfsettingsd
+exec --no-startup-id picom --config ~/.config/picom/picom.conf
+exec --no-startup-id nitrogen --restore
+exec --no-startup-id xsetroot -cursor_name left_ptr
+exec --no-startup-id setxkbmap pl
+exec --no-startup-id feh --bg-fill ~/wallpaper.png
 
 
+# ============================================================================ 
+# Basic app shortcuts
+# ============================================================================ 
 
+bindsym $mod+Return exec $term
+bindsym $mod+Shift+Return exec $term --drop-down
+bindsym $mod+d exec $launcher
+bindsym $mod+Shift+d exec $run
+bindsym $mod+Tab exec $window_switcher
+
+bindsym $mod+b exec $browser
+bindsym $mod+f exec $files
+bindsym $mod+Shift+v exec pavucontrol
+bindsym $mod+n exec network-manager-gnome
+bindsym $mod+Shift+x exec i3lock -c 111111
+
+# ============================================================================ 
+# Window management
+# ============================================================================ 
+
+bindsym $mod+q kill
+bindsym $mod+Shift+q kill
+
+# Vim-style focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+
+# Arrow focus
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+
+# Vim-style move
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+# Arrow move
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+
+# Splits
+bindsym $mod+backslash split h
+bindsym $mod+minus split v
+
+# Layouts
+bindsym $mod+s layout stacking
+bindsym $mod+w layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+Shift+f fullscreen toggle
+
+# Floating
+floating_modifier $mod
+bindsym $mod+space focus mode_toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+c sticky toggle
+
+# Parent/child focus
+bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
+
+# Reload/restart/exit
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'Exit i3?' -B 'Exit' 'i3-msg exit'"
+
+# ============================================================================ 
+# Workspaces
+# ============================================================================ 
+
+set $ws1  "1: terminal"
+set $ws2  "2: web"
+set $ws3  "3: code"
+set $ws4  "4: files"
+set $ws5  "5: docs"
+set $ws6  "6: chat"
+set $ws7  "7: media"
+set $ws8  "8: vm"
+set $ws9  "9: misc"
+set $ws10 "10: sys"
+
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
+bindsym $mod+6 workspace $ws6
+bindsym $mod+7 workspace $ws7
+bindsym $mod+8 workspace $ws8
+bindsym $mod+9 workspace $ws9
+bindsym $mod+0 workspace $ws10
+
+bindsym $mod+Shift+1 move container to workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5
+bindsym $mod+Shift+6 move container to workspace $ws6
+bindsym $mod+Shift+7 move container to workspace $ws7
+bindsym $mod+Shift+8 move container to workspace $ws8
+bindsym $mod+Shift+9 move container to workspace $ws9
+bindsym $mod+Shift+0 move container to workspace $ws10
+
+# Move and follow
+bindsym $mod+Ctrl+1 move container to workspace $ws1; workspace $ws1
+bindsym $mod+Ctrl+2 move container to workspace $ws2; workspace $ws2
+bindsym $mod+Ctrl+3 move container to workspace $ws3; workspace $ws3
+bindsym $mod+Ctrl+4 move container to workspace $ws4; workspace $ws4
+bindsym $mod+Ctrl+5 move container to workspace $ws5; workspace $ws5
+
+# ============================================================================ 
+# Workspace rules
+# ============================================================================ 
+
+assign [class="Firefox"] $ws2
+assign [class="Code"] $ws3
+assign [class="Thunar"] $ws4
+assign [class="discord"] $ws6
+assign [class="Spotify"] $ws7
+assign [class="VirtualBox Manager"] $ws8
+
+for_window [class="Pavucontrol"] floating enable
+for_window [class="Blueman-manager"] floating enable
+for_window [class="Nm-connection-editor"] floating enable
+for_window [class="Xfce4-screenshooter"] floating enable
+for_window [title="Preferences"] floating enable
+for_window [window_role="pop-up"] floating enable
+for_window [window_role="task_dialog"] floating enable
+
+# Center selected floating windows
+for_window [class="Pavucontrol"] move position center
+for_window [class="Nm-connection-editor"] move position center
+
+# ============================================================================ 
+# Scratchpad
+# ============================================================================ 
+
+# Send current window to scratchpad
+bindsym $mod+Shift+grave move scratchpad
+
+# Show scratchpad window
+bindsym $mod+grave scratchpad show
+
+# Dedicated scratchpad terminal
+bindsym $mod+Ctrl+Return exec --no-startup-id $term --title scratchpad-terminal
+for_window [title="scratchpad-terminal"] floating enable, move scratchpad, resize set 1200 700
+
+# ============================================================================ 
+# Resize mode
+# ============================================================================ 
+
+mode "resize" {
+    bindsym h resize shrink width 10 px or 5 ppt
+    bindsym j resize grow height 10 px or 5 ppt
+    bindsym k resize shrink height 10 px or 5 ppt
+    bindsym l resize grow width 10 px or 5 ppt
+
+    bindsym Left resize shrink width 10 px or 5 ppt
+    bindsym Down resize grow height 10 px or 5 ppt
+    bindsym Up resize shrink height 10 px or 5 ppt
+    bindsym Right resize grow width 10 px or 5 ppt
+
+    bindsym Shift+h resize shrink width 30 px or 10 ppt
+    bindsym Shift+j resize grow height 30 px or 10 ppt
+    bindsym Shift+k resize shrink height 30 px or 10 ppt
+    bindsym Shift+l resize grow width 30 px or 10 ppt
+
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+r mode "default"
+}
+bindsym $mod+r mode "resize"
+
+# ============================================================================ 
+# System mode
+# ============================================================================ 
+
+set $mode_system System: [l] lock, [e] logout, [s] suspend, [r] reboot, [p] poweroff
+
+mode "$mode_system" {
+    bindsym l exec i3lock -c 111111, mode "default"
+    bindsym e exec i3-msg exit, mode "default"
+    bindsym s exec systemctl suspend, mode "default"
+    bindsym r exec systemctl reboot, mode "default"
+    bindsym p exec systemctl poweroff, mode "default"
+
+    bindsym Escape mode "default"
+    bindsym Return mode "default"
+}
+bindsym $mod+Escape mode "$mode_system"
+
+# ============================================================================ 
+# Gaps mode
+# ============================================================================ 
+
+set $mode_gaps Gaps: inner [h/j/k/l], outer [Shift+h/j/k/l], reset [0]
+
+mode "$mode_gaps" {
+    bindsym h gaps inner current minus 2
+    bindsym l gaps inner current plus 2
+    bindsym j gaps outer current minus 2
+    bindsym k gaps outer current plus 2
+
+    bindsym Shift+h gaps inner all minus 2
+    bindsym Shift+l gaps inner all plus 2
+    bindsym Shift+j gaps outer all minus 2
+    bindsym Shift+k gaps outer all plus 2
+
+    bindsym 0 gaps inner all set 8; gaps outer all set 4
+
+    bindsym Escape mode "default"
+    bindsym Return mode "default"
+}
+bindsym $mod+g mode "$mode_gaps"
+
+# ============================================================================ 
+# Audio, brightness, media
+# ============================================================================ 
+
+bindsym XF86AudioRaiseVolume exec pactl set-sink-volume @DEFAULT_SINK@ +5%
+bindsym XF86AudioLowerVolume exec pactl set-sink-volume @DEFAULT_SINK@ -5%
+bindsym XF86AudioMute exec pactl set-sink-mute @DEFAULT_SINK@ toggle
+bindsym XF86AudioMicMute exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
+
+bindsym XF86MonBrightnessUp exec brightnessctl set +10%
+bindsym XF86MonBrightnessDown exec brightnessctl set 10%-
+
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+
+# ============================================================================ 
+# Screenshots
+# ============================================================================ 
+
+bindsym Print exec xfce4-screenshooter
+bindsym $mod+Print exec xfce4-screenshooter -r
+bindsym $mod+Shift+Print exec xfce4-screenshooter -w
+
+
+# ============================================================================ 
+# Appearance
+# ============================================================================ 
+
+default_border pixel 2
+default_floating_border pixel 2
+
+hide_edge_borders smart
+smart_borders on
+smart_gaps on
+
+gaps inner 8
+gaps outer 4
+
+client.focused          $focused $focused $fg     $accent $focused
+client.focused_inactive $border  $border  $fg     $border $border
+client.unfocused        $border  $bg      $muted  $border $border
+client.urgent           $urgent  $urgent  $fg     $urgent $urgent
+client.placeholder      $bg      $bg      $fg     $bg     $bg
+
+# ============================================================================ 
+# Bar
+# ============================================================================ 
+
+bar {
+    position bottom
+    status_command i3status
+    font pango:$font
+    tray_output primary
+
+    colors {
+        background $bg
+        statusline $fg
+        separator  $border
+
+        focused_workspace  $focused $focused $fg
+        active_workspace   $border  $border  $fg
+        inactive_workspace $bg      $bg      $muted
+        urgent_workspace   $urgent  $urgent  $fg
+        binding_mode       $accent2 $accent2 $bg
+    }
+}
