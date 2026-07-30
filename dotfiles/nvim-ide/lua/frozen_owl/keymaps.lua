@@ -15,6 +15,8 @@ map('n', '<leader>t', '<cmd>ToggleTerm<CR>', { desc = 'Terminal' })
 map('n', '<leader>gg', '<cmd>LazyGit<CR>', { desc = 'LazyGit' })
 map('n', '<leader>xx', '<cmd>Trouble diagnostics toggle<CR>', { desc = 'Diagnostics' })
 map('n', '<leader>cs', '<cmd>Telescope lsp_document_symbols<CR>', { desc = 'Document symbols' })
+map("n", "<C-]>", "<Cmd>tabnext<CR>", { desc = "Go to next tab", silent = true })
+map("n", "<C-}>", "<Cmd>tabprevious<CR>", { desc = "Go to pervious tab", silent = true })
 
 -- ============================================================
 -- UV related keymaps
