@@ -6,5 +6,3 @@ vim.g.maplocalleader = " "
 require("frozen_owl.options")
 require("frozen_owl.keymaps")
 require("frozen_owl.lazy")
-
-vim.cmd.colorscheme("blue")
